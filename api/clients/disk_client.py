@@ -1,6 +1,6 @@
-from schemas.models import GetInfo
+from http import HTTPStatus
 from api.routes.disk_routes import DiskInfoRouter
-from pydantic import TypeAdapter
+from requests import Response
 
 class DiskClient:
 
@@ -8,8 +8,14 @@ class DiskClient:
         self._client = base_client
 
     
-    def get_info(self):
-        response = self._client.get(DiskInfoRouter.INFO)
-        adapter = TypeAdapter(GetInfo)
-        return adapter.validate_python(response)
-
+    def get_info(self, expected_status: HTTPStatus = HTTPStatus.OK, **kwargs):
+        response = self._client.get(DiskInfoRouter.INFO, **kwargs)
+        self._expected(response, expected_status)
+        return response
+    
+    def _expected(self, response: Response, expected_status: HTTPStatus):
+        if response.status_code != expected_status:
+            raise AssertionError(
+                            f"Ожидался {expected_status}, получен {response.status_code}. "        
+                            f"URL: {response.url}. Body: {response.text[:300]}"
+                    )

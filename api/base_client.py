@@ -23,7 +23,7 @@ class BaseClient:
         self._session.headers["Content-Type"] = "application/json"
 
         if oauth_token is not None:
-            self._session.headers["Authorization"] = f"OAuth {oauth_token}"
+            self._session.headers["Authorization"] = f"OAuth {oauth_token}" # отключать выборочно для публичных методов - большинство требуют авторизации, поэтому вкючаем по умолчанию.
     
     def _build_url(self, path: str) -> str:
         return f"{self.base_url.rstrip('/')}/{self.api_version.strip('/')}/{path.lstrip('/')}" 
