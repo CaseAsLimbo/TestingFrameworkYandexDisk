@@ -172,13 +172,90 @@ GitHub Actions workflow `.github/workflows/checks.yml` запускается н
 
 ## 📊 Allure-отчёт
 
-Локально:
+### Установка Allure CLI
+
+`allure-pytest` (Python-плагин) генерирует JSON-результаты, но для просмотра HTML-отчёта нужен **Allure Commandline** — отдельная Java-утилита, которая **не устанавливается через pip**.
+
+#### macOS
 
 ```bash
-pytest --alluredir=allure-results
+brew install allure
+```
+
+Проверка:
+
+```bash
+allure --version
+```
+
+#### Ubuntu / Debian
+
+В официальных репозиториях Ubuntu пакета `allure` **нет** (одноимённый пакет — это игра). Установи вручную:
+
+```bash
+# 1. Java (если ещё нет)
+sudo apt install default-jre
+
+# 2. Скачать последний релиз
+wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz
+
+# 3. Распаковать и переместить
+tar -xzf allure-2.32.0.tgz
+sudo mv allure-2.32.0 /opt/allure
+
+# 4. Симлинк в PATH
+sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+```
+
+Проверка:
+
+```bash
+allure --version
+```
+
+#### Установка Python-плагина
+
+```bash
+pip install allure-pytest
+```
+
+Или через зависимости проекта:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+### Запуск тестов с отчётом
+
+```bash
+# 1. Сгенерировать JSON-результаты
+uv run pytest --alluredir=allure-results
+
+# 2. Построить и открыть HTML-отчёт в браузере
 allure serve allure-results
 ```
 
+> ⚠️ `allure serve` запускается **напрямую**, без `uv` — это внешняя Java-утилита, а не Python-пакет.
+
+### Генерация статического HTML
+
+Если нужно сохранить отчёт как папку с HTML (например, для публикации):
+
+```bash
+allure generate allure-results -o allure-report --clean
+```
+
+Открыть результат:
+
+```bash
+allure open allure-report
+```
+
+### Через Makefile
+
+```bash
+make allure
+```
 В CI — отчёт публикуется автоматически на `https://<username>.github.io/<repo>/`.
 
 ## ⚠️ Ограничения

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  content: write
+  contents: write
   pages: write
   id-token: write
 
@@ -60,7 +60,7 @@ jobs:
 
       - name: Generate Allure report
         if: always()
-        uses: simple-elf/allure-report-action@v1.9
+        uses: simple-elf/allure-report-action@v1.15
         with:
           allure_results: allure-results
           allure_history: allure-history
@@ -68,8 +68,9 @@ jobs:
 
       - name: Deploy report to GitHub Pages
         if: always() && github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: allure-history
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: allure-history
+          clean: true
