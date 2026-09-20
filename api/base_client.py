@@ -19,8 +19,10 @@ class BaseClient:
             self._session.hooks["response"].append(request_response_logger)
 
         # Заголовки по умолчанию.
-        self._session.headers["Accept"] = "application/json"
-        self._session.headers["Content-Type"] = "application/json"
+        self._session.headers = {
+                "Accept": "application/json", 
+                "Content-Type": "application/json",
+                "User-Agent" : "TestFramework-YandexDisk (https://github.com/CaseAsLimbo/TestingFrameworkYandexDisk)"}
 
         if oauth_token is not None:
             self._session.headers["Authorization"] = f"OAuth {oauth_token}" # отключать выборочно для публичных методов - большинство требуют авторизации, поэтому вкючаем по умолчанию.

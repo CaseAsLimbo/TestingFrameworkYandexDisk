@@ -1,7 +1,9 @@
-class DiskInfoRouter:
+class DiskUploadRouter:
 
     INFO = "disk"
-    MOVE = "disk/resources/move"
     RESOURCES = "disk/resources"
-    COPY = "disk/resources/copy"
+    UPLOAD = "disk/resources/upload"
+    PUBLISH = "disk/resources/publish"
+    UNPUBLISH = "disk/resources/unpublish"
+    DOWNLOAD = "disk/resources/download"
 
