@@ -56,7 +56,6 @@ API_TOKEN=your_yandex_oauth_token_here
 ```env
 # BASE_URL=https://cloud-api.yandex.net
 # API_VERSION=v1
-# TIMEOUT=10
 ```
 
 ## 🔑 Получение токена
@@ -106,31 +105,29 @@ make allure     # сгенерировать и открыть Allure-отчёт
 
 ```
 .
-├── .github/workflows/       # CI/CD
-├── api/
-│   ├── base_client.py       # HTTP-транспорт: сессия, ретраи, таймауты
-│   ├── clients/
-│   │   └── disk_client.py   # Доменный клиент Яндекс.Диска
-│   └── routes/
-│       └── disk_routes.py   # Константы маршрутов
-├── config/
-│   └── settings.py          # Pydantic Settings
-├── schemas/
-│   ├── base.py              # Базовый класс моделей
-│   └── models.py            # Pydantic-модели ответов
-├── tests/
-│   ├── conftest.py          # Общие фикстуры
-│   ├── test_get_info.py
-│   ├── test_get_meta.py
-│   ├── test_post_upload.py
-│   ├── test_delete.py
-│   └── test_publish.py
-├── conftest.py              # Инфраструктурные фикстуры (session-scoped)
-├── .env.example
+├── api
+│   ├── base_client.py                  # Базовый клиент, управляет сессией и ретраями
+│   ├── clients
+│   │   └── disk_client.py              # Кастомный клиент, реализует методы API
+│   ├── hooks.py                        # хуки для логгирования запросов и ответов
+│   └── routes
+│       └── disk_routes.py              # Маршруты кастомного клиента, предполагается, что клиентов может быть несколько
+├── config
+│   └── settings.py
+├── conftest.py                         # фикстуры общего назначения
+├── env.example
+├── Makefile
 ├── pyproject.toml
-├── requirements.txt
+├── README.md
 ├── requirements-dev.txt
-└── README.md
+├── requirements.txt
+├── schemas
+│   ├── base.py
+│   └── models.py
+└── tests
+    ├── conftest.py                     # фикстуры для тестов
+    └── test_disk                       # тесты на API YADisk 
+        └── test_disk_general.py
 ```
 
 ## 🏗️ Архитектура
@@ -155,7 +152,6 @@ make allure     # сгенерировать и открыть Allure-отчёт
 | `API_TOKEN` | ✅ | — | OAuth-токен Яндекс.Диска |
 | `BASE_URL` | ❌ | `https://cloud-api.yandex.net` | Базовый URL API |
 | `API_VERSION` | ❌ | `v1` | Версия API |
-| `TIMEOUT` | ❌ | `10` | Таймаут запросов, сек |
 
 Секреты хранятся **только** в `.env` (локально) или в GitHub Secrets (CI). `.env` в `.gitignore`.
 
@@ -190,7 +186,3 @@ allure serve allure-results
 - Тесты **не идемпотентны** в части использования Диска: создают и удаляют файлы. Не запускайте против продакшн-аккаунта с важными данными.
 - Троттлинг загрузки: Яндекс ограничивает скорость для неофициальных клиентов. Если тесты начнут тормозить — см. `User-Agent` в `BaseClient`.
 - Токен долгоживущий, но при смене пароля Яндекс-аккаунта — отзывается.
-
-## 📝 Лицензия
-
-MIT
