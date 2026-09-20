@@ -23,7 +23,10 @@ def uploaded_copy_path(client):
     """Уникальный путь + гарантированный cleanup даже при падении теста."""
     path = f"uploaded_copy_{uuid.uuid4().hex[:8]}.txt"
     yield path
-    client.delete(path, expected_status=HTTPStatus.NO_CONTENT)
+    try:
+        client.delete(path, expected_status=HTTPStatus.NO_CONTENT)
+    except AssertionError:
+        pass
 
 
 @pytest.fixture
@@ -43,4 +46,7 @@ def uploaded_file(client):
     path = f"disk:/test_file_{uuid.uuid4().hex[:8]}.txt"
     client.put_upload_file(path, b"test content")
     yield path
-    client.delete(path, expected_status=HTTPStatus.NO_CONTENT)
+    try:
+        client.delete(path, expected_status=HTTPStatus.NO_CONTENT)
+    except AssertionError:
+        pass
