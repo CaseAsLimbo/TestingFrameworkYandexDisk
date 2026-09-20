@@ -1,7 +1,10 @@
 import uuid
-import pytest
-from schemas.models import LinkUpload
 from http import HTTPStatus
+
+import pytest
+
+from schemas.models import LinkUpload
+
 
 @pytest.fixture
 def prepared_source_url(client):
@@ -20,10 +23,7 @@ def uploaded_copy_path(client):
     """Уникальный путь + гарантированный cleanup даже при падении теста."""
     path = f"uploaded_copy_{uuid.uuid4().hex[:8]}.txt"
     yield path
-    try:
-        client.delete(path, expected_status=HTTPStatus.NO_CONTENT)
-    except AssertionError:
-        pass  # файла нет — уже удалён или не создан
+    client.delete(path, expected_status=HTTPStatus.NO_CONTENT)
 
 
 @pytest.fixture
@@ -43,7 +43,4 @@ def uploaded_file(client):
     path = f"disk:/test_file_{uuid.uuid4().hex[:8]}.txt"
     client.put_upload_file(path, b"test content")
     yield path
-    try:
-        client.delete(path, expected_status=HTTPStatus.NO_CONTENT)
-    except AssertionError:
-        pass
+    client.delete(path, expected_status=HTTPStatus.NO_CONTENT)

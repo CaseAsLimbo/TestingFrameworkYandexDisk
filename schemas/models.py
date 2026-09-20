@@ -1,5 +1,6 @@
-from schemas.base import Base
 from datetime import datetime
+
+from schemas.base import Base
 
 
 class GetInfo(Base):
@@ -20,13 +21,13 @@ class Resource(Base):
 
     name: str
     path: str
-    type: str                                    
-    size: int | None = None                     
+    type: str
+    size: int | None = None
     created: datetime
     modified: datetime
-    md5: str | None = None                       
-    mime_type: str | None = None                
-    media_type: str | None = None              
+    md5: str | None = None
+    mime_type: str | None = None
+    media_type: str | None = None
     resource_id: str | None = None
     revision: int | None = None
     custom_properties: dict | None = None

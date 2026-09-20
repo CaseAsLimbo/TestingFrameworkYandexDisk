@@ -1,25 +1,27 @@
-import pytest
 from http import HTTPStatus
+
+import pytest
+
 from schemas.models import GetInfo, LinkUpload, Resource
 
-@pytest.mark.parametrize("headers, expected_status", 
-                         [
-                        ({}, HTTPStatus.OK),
-                        ({"Authorization" : None}, HTTPStatus.UNAUTHORIZED)
-                          ])
+
+@pytest.mark.parametrize(
+    "headers, expected_status",
+    [({}, HTTPStatus.OK), ({"Authorization": None}, HTTPStatus.UNAUTHORIZED)],
+)
 def test_get_info_about_disk(client, headers, expected_status):
     response = client.get_info(expected_status=expected_status, headers=headers)
     if response.status_code == 200:
         info = GetInfo.model_validate(response.json())
         assert info.total_space >= 0
-    
-
 
 
 class TestPostUploadFromUrl:
     """Тесты для POST /v1/disk/resources/upload (загрузка по URL)."""
 
-    def test_upload_from_url_success(self, client, prepared_source_url, uploaded_copy_path):
+    def test_upload_from_url_success(
+        self, client, prepared_source_url, uploaded_copy_path
+    ):
         """Полный цикл: POST - polling - GET meta. Файл скопирован по URL."""
         target_path = uploaded_copy_path
 
@@ -57,11 +59,14 @@ class TestPostUploadFromUrl:
             expected_status=HTTPStatus.UNAUTHORIZED,
         )
 
-    @pytest.mark.parametrize("url", [
-        "not-a-url",
-        "http://",
-        "",
-    ])
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "not-a-url",
+            "http://",
+            "",
+        ],
+    )
     def test_upload_from_url_invalid_url(self, client, url):
         """POST с невалидным URL - 400."""
         client.post_upload_from_url_raw(
@@ -130,7 +135,6 @@ class TestGetMeta:
         assert meta.path.endswith(expected_name)
 
 
-
 class TestDelete:
     """Тесты для DELETE /v1/disk/resources."""
 
@@ -158,7 +162,6 @@ class TestDelete:
             headers={"Authorization": None},
             expected_status=HTTPStatus.UNAUTHORIZED,
         )
-
 
 
 class TestPublish:

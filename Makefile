@@ -13,7 +13,9 @@ lint:
 	ruff check .
 
 format:
-	ruff format .
+	uv run autoflake -r --in-place --remove-all-unused-imports ./api ./config ./schemas ./tests;
+	uv run isort ./api ./config ./schemas ./tests;
+	uv run black ./api ./config ./schemas ./tests;
 
 allure:
 	pytest --alluredir=allure-results
